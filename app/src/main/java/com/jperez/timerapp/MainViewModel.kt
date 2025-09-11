@@ -1,0 +1,6 @@
+package com.jperez.timerapp
+
+import androidx.lifecycle.ViewModel
+
+class MainViewModel : ViewModel() {
+}
