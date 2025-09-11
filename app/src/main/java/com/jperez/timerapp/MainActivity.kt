@@ -115,7 +115,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        // Bind to LocalService.
+        // Bind to teseet.
         Intent(this, TimerService::class.java).also { intent ->
             bindService(intent, connection, BIND_AUTO_CREATE)
         }
