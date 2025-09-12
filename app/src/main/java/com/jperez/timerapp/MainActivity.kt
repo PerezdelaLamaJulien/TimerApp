@@ -19,11 +19,14 @@ import androidx.lifecycle.Observer
 import com.jperez.timerapp.ui.theme.TimerAppTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.Duration
+import java.time.Instant
+import java.time.LocalDateTime
 
 class MainActivity : ComponentActivity() {
 
-    private var mService: TimerService? = null
+    val viewModel: MainViewModel by viewModel()
 
     private val _isPaused = MutableStateFlow(false)
     val isPaused: StateFlow<Boolean> = _isPaused
@@ -31,15 +34,26 @@ class MainActivity : ComponentActivity() {
     private val _duration = MutableStateFlow(Duration.ZERO)
     val duration: StateFlow<Duration> = _duration
 
-    /** Defines callbacks for service binding, passed to bindService().  */
+    private var launchTimerDateTime: LocalDateTime? = null
+    private var mService: TimerService? = null
+    private val durationObserver : Observer<Duration> = Observer { newDuration ->
+        _duration.value = newDuration
+    }
+    private val instantObserver : Observer<Instant?> = Observer { instantStop ->
+        if(instantStop != null){
+            viewModel.registerTimer(
+                duration.value,
+                launchTimerDateTime ?: LocalDateTime.now()
+            )
+        }
+    }
+
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val binder = service as TimerService.LocalBinder
             mService = binder.getService()
-            val nameObserver = Observer<Duration> { newDuration ->
-                _duration.value = newDuration
-            }
-            mService!!.durationLiveData.observe(this@MainActivity, nameObserver)
+            mService!!.durationLiveData.observe(this@MainActivity, durationObserver)
+            mService!!.instantTimerStopLiveData.observe(this@MainActivity, instantObserver)
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {}
@@ -63,6 +77,7 @@ class MainActivity : ComponentActivity() {
                                 this.action = "START_TIMER"
                             }
                         intent.putExtra("time", "demo")
+                        launchTimerDateTime = LocalDateTime.now()
                         ContextCompat.startForegroundService(this@MainActivity, intent)
                     },
                     onPaused = {
@@ -123,6 +138,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onStop() {
         super.onStop()
+        mService!!.durationLiveData.removeObserver(durationObserver)
+        mService!!.instantTimerStopLiveData.removeObserver(instantObserver)
         unbindService(connection)
     }
 }

@@ -16,9 +16,8 @@ import android.text.format.DateUtils
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import java.time.Duration
+import java.time.Instant
 
 class
 TimerService : Service() {
@@ -26,18 +25,18 @@ TimerService : Service() {
     private val CHANNEL_ID = "foreground_timer_channel" // Define your channel ID
     private val handler = Handler(Looper.getMainLooper()) // Handler to update every second
 
-    private val _durationFlow = MutableStateFlow<Duration>(Duration.ZERO) // replay = 1 to hold the last emitted value
-    val durationFlow : StateFlow<Duration> = _durationFlow
-
+    var duration : Duration = Duration.ZERO
     val durationLiveData = MutableLiveData<Duration>()
+
+    val instantTimerStopLiveData = MutableLiveData<Instant?>()
 
     private val updateTimeRunnable = object : Runnable {
         override fun run() {
             // Increase the time by 1 second
-            _durationFlow.value = durationFlow.value.plusSeconds(1)
-            durationLiveData.postValue(durationFlow.value)
+            duration = duration.plusSeconds(1)
+            durationLiveData.postValue(duration)
             // Update the notification with the new time
-            updateNotification(durationFlow.value)
+            updateNotification(duration)
             // Re-run this task every second (1000 ms)
             handler.postDelayed(this, 1000)
         }
@@ -148,6 +147,7 @@ TimerService : Service() {
     fun startTimer(){
         handler.post(updateTimeRunnable)
         isPaused = false
+        instantTimerStopLiveData.postValue(null)
         startNotificationService()
     }
 
@@ -162,12 +162,12 @@ TimerService : Service() {
     }
 
     private fun stopTimer() {
+        instantTimerStopLiveData.postValue(Instant.now())
         stopSelf()  // Stop the service and remove notification
         stopForeground(STOP_FOREGROUND_REMOVE)
         handler.removeCallbacks(updateTimeRunnable)  // Stop updating the timer
-        _durationFlow.value = Duration.ZERO
-        durationLiveData.postValue(durationFlow.value)
-
+        duration = Duration.ZERO
+        durationLiveData.postValue(duration)
     }
 
     override fun onDestroy() {
