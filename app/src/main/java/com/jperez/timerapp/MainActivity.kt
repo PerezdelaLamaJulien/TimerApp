@@ -67,8 +67,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             val duration = duration.collectAsState()
             val isPaused = isPaused.collectAsState()
+            val items = viewModel.uiState.collectAsState()
             TimerAppTheme {
                 MainScreen(
+                    items = items.value,
                     duration = duration.value,
                     isPaused = isPaused.value,
                     onStart = {
@@ -130,7 +132,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        // Bind to teseet.
         Intent(this, TimerService::class.java).also { intent ->
             bindService(intent, connection, BIND_AUTO_CREATE)
         }
