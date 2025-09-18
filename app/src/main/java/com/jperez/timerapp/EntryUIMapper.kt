@@ -13,38 +13,41 @@ class EntryUIMapper {
 
         entry.duration.toKotlinDuration().toComponents { hours, minutes, seconds, nano ->
             if (hours != 0L) {
-                durationString += if(hours == 1L){
+                durationString += if (hours == 1L) {
                     "$hours heure"
                 } else {
                     "$hours heures"
                 }
             }
             if (minutes != 0) {
-                if(durationString != ""){
+                if (durationString != "") {
                     durationString += " "
                 }
 
-                durationString += if(minutes == 1){
+                durationString += if (minutes == 1) {
                     "$minutes minute"
                 } else {
                     "$minutes minutes"
                 }
             }
             if (seconds != 0) {
-                if(durationString != ""){
+                if (durationString != "") {
                     durationString += " "
                 }
 
-                durationString += if(seconds == 1){
+                durationString += if (seconds == 1) {
                     "$seconds seconde"
                 } else {
                     "$seconds secondes"
                 }
             }
         }
-            return EntryUI(
+        return EntryUI(
             date = entry.date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)),
-            duration = durationString
+            duration = durationString,
+            description = entry.description ?: "",
+            color = CategoryColor.DARK_GREEN,
+            categoryType = CategoryType.DEFAULT,
         )
     }
 }

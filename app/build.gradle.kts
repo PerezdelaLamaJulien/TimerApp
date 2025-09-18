@@ -54,6 +54,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.icons.lucide)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.koin.test)

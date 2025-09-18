@@ -30,7 +30,9 @@ class MainViewModel : ViewModel() {
             val savedEntry = localDataSource.saveEntryToDatabase(
                 Entry(
                     date = launchedDateTime,
-                    duration = duration
+                    duration = duration,
+                    description = "", //todo
+                    category = ""
                 )
             )
             _uiState.value.add(entryUIMapper.mapEntryToEntryUI(savedEntry))
