@@ -18,13 +18,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TimerApp">
         <service
-            android:name=".TimerService"
+            android:name=".feature.service.TimerService"
             android:foregroundServiceType="dataSync"
             android:exported="true"
             tools:ignore="ForegroundServicePermission" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".feature.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
