@@ -81,9 +81,11 @@ fun CategoryItemPreviewLight() {
                 categoryUI = CategoryUI(
                     name = "Lecture",
                     color = CategoryColor.DARK_GREEN,
-                    categoryType = CategoryType.READ
+                    categoryType = CategoryType.READ,
+                    id = null
                 )
             )
+
         }
     }
 }
@@ -97,7 +99,8 @@ fun CategoryItemPreviewDark() {
                 categoryUI = CategoryUI(
                     name = "Lecture",
                     color = CategoryColor.DARK_GREEN,
-                    categoryType = CategoryType.READ
+                    categoryType = CategoryType.READ,
+                    id = null
                 )
             )
         }

@@ -2,7 +2,6 @@ package com.jperez.timerapp.feature.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jperez.timerapp.domain.model.Category
 import com.jperez.timerapp.domain.usecase.GetCategoriesUseCase
 import com.jperez.timerapp.domain.usecase.SaveCategoryUseCase
 import com.jperez.timerapp.feature.mapper.CategoryUIMapper
@@ -24,7 +23,7 @@ class SettingsViewModel : ViewModel() {
         CategoryUIMapper::class.java)
 
     private val _uiState = MutableStateFlow<MutableList<CategoryUI>>(mutableListOf())
-    val uiState: StateFlow<List<CategoryUI>> = _uiState
+    val uiState: StateFlow<MutableList<CategoryUI>> = _uiState
 
     init {
         getCategories()
@@ -39,12 +38,15 @@ class SettingsViewModel : ViewModel() {
 
     fun saveCategory(category : CategoryUI) {
         viewModelScope.launch {
-            saveCategoryUseCase.execute(Category(
-                name = category.name,
-                type = category.categoryType.name,
-                color = category.color.name,
-            ))
-            _uiState.value.add(category)
+            saveCategoryUseCase.execute(
+                categoryUIMapper.reverseMapCategoryUIToCategory(category)
+            )
+            val updatedIndex = uiState.value.indexOfFirst { it.id == category.id }
+            if(updatedIndex != -1){
+                _uiState.value = uiState.value.toMutableList().apply { this[updatedIndex] = category }
+            } else {
+                _uiState.value = uiState.value.toMutableList().apply { this.add(category) }
+            }
         }
     }
 }

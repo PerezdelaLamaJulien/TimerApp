@@ -80,9 +80,10 @@ private fun CategoryModalBottomSheetContent(
         ) {
             CategoryItem(
                 categoryUI = CategoryUI(
-                    nameTextFieldState.text.toString(),
-                    CategoryColor.valueOf(colorTextFieldState.text.toString()),
-                    CategoryType.valueOf(typeTextFieldState.text.toString())
+                    id = null,
+                    name = nameTextFieldState.text.toString(),
+                   color = CategoryColor.valueOf(colorTextFieldState.text.toString()),
+                   categoryType =  CategoryType.valueOf(typeTextFieldState.text.toString())
                 )
             )
 
@@ -147,9 +148,10 @@ private fun CategoryModalBottomSheetContent(
             // Sheet content
             Button(onClick = {
                 onSave(CategoryUI(
-                    nameTextFieldState.text.toString(),
-                    CategoryColor.valueOf(colorTextFieldState.text.toString()),
-                    CategoryType.valueOf(typeTextFieldState.text.toString())
+                    id = categoryUI?.id,
+                    name = nameTextFieldState.text.toString(),
+                    color = CategoryColor.valueOf(colorTextFieldState.text.toString()),
+                    categoryType = CategoryType.valueOf(typeTextFieldState.text.toString())
                 ))
             }) {
                 Text("Save")

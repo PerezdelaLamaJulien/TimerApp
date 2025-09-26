@@ -2,6 +2,7 @@ package com.jperez.timerapp.feature.composable
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.CirclePlus
 import com.composables.icons.lucide.Lucide
+import com.jperez.timerapp.feature.model.CategoryUI
 import com.jperez.timerapp.feature.viewmodel.SettingsViewModel
 import com.jperez.timerapp.ui.theme.TimerAppTheme
 import org.koin.androidx.compose.koinViewModel
@@ -43,6 +45,7 @@ fun SettingsScreen(
 ) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
+    var bottomSheetCategoryUI by remember { mutableStateOf<CategoryUI?>(null) }
     val categoryItems = viewModel.uiState.collectAsState()
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -70,7 +73,7 @@ fun SettingsScreen(
                     showBottomSheet = false
                 },
                 sheetState = sheetState,
-                categoryUI = null
+                categoryUI = bottomSheetCategoryUI
             )
         }
         Column(
@@ -90,6 +93,7 @@ fun SettingsScreen(
             ) {
                 Text("Categories", modifier = Modifier.align(Alignment.CenterVertically))
                 IconButton(onClick = {
+                    bottomSheetCategoryUI = null
                     showBottomSheet = true
                 }) {
                     Icon(
@@ -107,6 +111,10 @@ fun SettingsScreen(
                 categoryItems.value.forEach { categoryUI ->
                     CategoryItem(
                         categoryUI,
+                        modifier = modifier.clickable{
+                            bottomSheetCategoryUI = categoryUI
+                            showBottomSheet = true
+                        }
                     )
                 }
             }
