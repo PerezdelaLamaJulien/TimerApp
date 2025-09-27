@@ -5,6 +5,7 @@ import com.jperez.timerapp.domain.model.Category
 import com.jperez.timerapp.domain.model.Entry
 import com.jperez.timerapp.feature.model.CategoryColor
 import com.jperez.timerapp.feature.model.CategoryType
+import com.jperez.timerapp.feature.model.CategoryUI
 import com.jperez.timerapp.feature.model.EntryUI
 import java.time.LocalDateTime
 import kotlin.time.Duration.Companion.seconds
@@ -49,6 +50,27 @@ class TestMockConstant {
 
         val outputCategory = inputCategory.copy(
             uid = "uid"
+        )
+
+        val categoryUI = CategoryUI(
+            id = "uid",
+            name = "Category",
+            categoryType = CategoryType.DEFAULT,
+            color = CategoryColor.DARK_GREEN
+        )
+
+        val categoryUIWithoutId = CategoryUI(
+            id = null,
+            name = "Category",
+            categoryType = CategoryType.DEFAULT,
+            color = CategoryColor.DARK_GREEN
+        )
+
+        val updatedCategoryUI = CategoryUI(
+            id = "uid",
+            name = "Category Updated",
+            categoryType = CategoryType.GAME,
+            color = CategoryColor.DARK_PINK
         )
     }
 }
