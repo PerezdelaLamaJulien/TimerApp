@@ -4,8 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -40,15 +43,20 @@ import com.jperez.timerapp.ui.theme.TimerAppTheme
 fun CategoryModalBottomSheet(
     onDismissed: () -> Unit,
     onSave: (CategoryUI) -> Unit,
+    onDelete: (String) -> Unit,
     sheetState: SheetState,
     categoryUI: CategoryUI? = null,
 ) {
+    val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     ModalBottomSheet(
+        modifier = Modifier.padding(bottom = if(categoryUI != null) bottomPadding else 0.dp),
+        sheetGesturesEnabled = false,
         onDismissRequest = onDismissed,
         sheetState = sheetState
     ) {
         CategoryModalBottomSheetContent(
             onSave = onSave,
+            onDelete = onDelete,
             modifier = Modifier.fillMaxSize(),
             categoryUI = categoryUI
         )
@@ -60,6 +68,7 @@ fun CategoryModalBottomSheet(
 @Composable
 private fun CategoryModalBottomSheetContent(
     onSave: (CategoryUI) -> Unit,
+    onDelete: (String) -> Unit,
     modifier: Modifier = Modifier,
     categoryUI: CategoryUI? = null,
 ) {
@@ -74,7 +83,12 @@ private fun CategoryModalBottomSheetContent(
     var typeExpanded by remember { mutableStateOf(false) }
 
         Column(
-            modifier = modifier.padding(8.dp),
+            modifier = modifier.padding(
+                top = 8.dp,
+                start = 8.dp,
+                end = 8.dp,
+                bottom = 58.dp,
+                ),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -145,7 +159,6 @@ private fun CategoryModalBottomSheetContent(
                 }
             }
 
-            // Sheet content
             Button(onClick = {
                 onSave(CategoryUI(
                     id = categoryUI?.id,
@@ -154,9 +167,18 @@ private fun CategoryModalBottomSheetContent(
                     categoryType = CategoryType.valueOf(typeTextFieldState.text.toString())
                 ))
             }) {
-                Text("Save")
+                Text( if(categoryUI != null) "Update" else "Save")
             }
-    }
+
+            if(categoryUI?.id != null) {
+                Button(onClick = {
+                    onDelete(categoryUI.id)
+                }) {
+                    Text("Delete")
+                }
+
+            }
+        }
 }
 
 @Composable
@@ -166,6 +188,7 @@ fun CategoryModalBottomSheetPreviewLight(){
         Box(Modifier.background(MaterialTheme.colorScheme.background)) {
             CategoryModalBottomSheetContent(
                 onSave = {},
+                onDelete = {},
                 categoryUI = null
             )
         }
@@ -179,6 +202,7 @@ fun CategoryModalBottomSheetPreviewDark(){
         Box(Modifier.background(MaterialTheme.colorScheme.background)) {
             CategoryModalBottomSheetContent(
                 onSave = {},
+                onDelete = {},
                 categoryUI = null
             )
         }

@@ -10,6 +10,7 @@ import com.jperez.timerapp.data.datasource.EntryLocalDataSource
 import com.jperez.timerapp.data.datasource.EntryLocalDataSourceImpl
 import com.jperez.timerapp.domain.usecase.SaveCategoryUseCase
 import com.jperez.timerapp.domain.usecase.AddEntryUseCase
+import com.jperez.timerapp.domain.usecase.DeleteCategoryUseCase
 import com.jperez.timerapp.domain.usecase.GetCategoriesUseCase
 import com.jperez.timerapp.domain.usecase.GetEntriesUseCase
 import com.jperez.timerapp.feature.mapper.CategoryUIMapper
@@ -55,6 +56,10 @@ var koinModule = module {
 
     factory<GetEntriesUseCase> {
         GetEntriesUseCase()
+    }
+
+    factory<DeleteCategoryUseCase> {
+        DeleteCategoryUseCase()
     }
 
     // Data

@@ -72,6 +72,10 @@ fun SettingsScreen(
                     viewModel.saveCategory(categoryUI)
                     showBottomSheet = false
                 },
+                onDelete = { categoryId ->
+                    viewModel.deleteCategory(categoryId)
+                    showBottomSheet = false
+                },
                 sheetState = sheetState,
                 categoryUI = bottomSheetCategoryUI
             )
