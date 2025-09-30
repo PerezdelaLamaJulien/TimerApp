@@ -53,8 +53,8 @@ class EntryUIMapper {
             date = entry.date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)),
             duration = formatDuration(entry.duration.toKotlinDuration()),
             description = entry.description ?: "",
-            color = CategoryColor.DARK_GREEN,
-            categoryType = CategoryType.DEFAULT,
+            color = CategoryColor.valueOf(entry.category.color),
+            categoryType = CategoryType.valueOf(entry.category.type),
         )
     }
 }

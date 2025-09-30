@@ -2,22 +2,18 @@ package com.jperez.timerapp.data.datasource
 
 import com.jperez.timerapp.data.database.CategoryDAO
 import com.jperez.timerapp.data.database.entity.CategoryEntity
+import com.jperez.timerapp.domain.mappers.CategoryEntityModelMapper
 import com.jperez.timerapp.domain.model.Category
 import org.koin.java.KoinJavaComponent.inject
 import java.util.UUID
+import kotlin.getValue
 
 class CategoryLocalDataSourceImpl : CategoryLocalDataSource {
     private val categoryDAO: CategoryDAO by inject(CategoryDAO::class.java)
+    private val categoryEntityModelMapper: CategoryEntityModelMapper by inject(CategoryEntityModelMapper::class.java)
 
     override suspend fun getCategoriesFromDatabase(): List<Category> {
-        return categoryDAO.getAll().map { it ->
-            Category(
-                uid = it.uid,
-                name = it.name,
-                type = it.type,
-                color = it.color
-            )
-        }
+        return categoryEntityModelMapper.mapEntityListToModelList(categoryDAO.getAll())
     }
 
     override suspend fun saveCategoryToDatabase(category: Category): Category {

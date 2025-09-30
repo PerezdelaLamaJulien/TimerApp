@@ -62,7 +62,7 @@ fun EntryListItem(
             ) {
                 Icon(
                     imageVector = entry.categoryType.icon,
-                    contentDescription = "Email"
+                    contentDescription = null
                 )
             }
             Column(

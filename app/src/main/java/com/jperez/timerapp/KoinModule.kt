@@ -8,6 +8,8 @@ import com.jperez.timerapp.data.datasource.CategoryLocalDataSource
 import com.jperez.timerapp.data.datasource.CategoryLocalDataSourceImpl
 import com.jperez.timerapp.data.datasource.EntryLocalDataSource
 import com.jperez.timerapp.data.datasource.EntryLocalDataSourceImpl
+import com.jperez.timerapp.domain.mappers.CategoryEntityModelMapper
+import com.jperez.timerapp.domain.mappers.EntryEntityModelMapper
 import com.jperez.timerapp.domain.usecase.SaveCategoryUseCase
 import com.jperez.timerapp.domain.usecase.AddEntryUseCase
 import com.jperez.timerapp.domain.usecase.DeleteCategoryUseCase
@@ -41,6 +43,14 @@ var koinModule = module {
         CategoryUIMapper()
     }
     // Domain
+
+    factory<CategoryEntityModelMapper> {
+        CategoryEntityModelMapper()
+    }
+
+    factory<EntryEntityModelMapper> {
+        EntryEntityModelMapper()
+    }
 
     factory<SaveCategoryUseCase> {
         SaveCategoryUseCase()

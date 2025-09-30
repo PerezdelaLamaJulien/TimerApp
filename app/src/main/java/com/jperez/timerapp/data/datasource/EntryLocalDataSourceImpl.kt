@@ -2,23 +2,18 @@ package com.jperez.timerapp.data.datasource
 
 import com.jperez.timerapp.data.database.EntryDAO
 import com.jperez.timerapp.data.database.entity.EntryEntity
+import com.jperez.timerapp.domain.mappers.EntryEntityModelMapper
 import com.jperez.timerapp.domain.model.Entry
 import org.koin.java.KoinJavaComponent.inject
 import java.util.UUID
 
 class EntryLocalDataSourceImpl : EntryLocalDataSource {
     private val entryDAO: EntryDAO by inject(EntryDAO::class.java)
+    private val entryEntityModelMapper: EntryEntityModelMapper by inject(EntryEntityModelMapper::class.java)
 
     override suspend fun getEntriesFromDatabase(): List<Entry> {
-        return entryDAO.getAll().map { it ->
-            Entry(
-                uid = it.uid,
-                date = it.date,
-                duration = it.duration,
-                category = it.category,
-                description = it.description
-            )
-        }
+        val entries =  entryDAO.getAll()
+        return entryEntityModelMapper.mapEntityListToModelList(entries)
     }
 
     override suspend fun saveEntryToDatabase(entry: Entry): Entry {
@@ -28,7 +23,7 @@ class EntryLocalDataSourceImpl : EntryLocalDataSource {
                 uid = id,
                 date = entry.date,
                 duration = entry.duration,
-                category = entry.category,
+                category = entry.category.uid!!,
                 description = entry.description
             )
         )

@@ -81,14 +81,11 @@ class MainActivity : ComponentActivity() {
             TimerAppTheme {
                 NavHost(navController = navController, startDestination = Main) {
                     composable<Main> {
-                        val duration = duration.collectAsState()
-                        val isPaused = isPaused.collectAsState()
-                        val items = viewModel.uiState.collectAsState()
 
                         MainScreen(
-                            items = items.value,
-                            duration = duration.value,
-                            isPaused = isPaused.value,
+                            uiState = viewModel.uiState.collectAsState().value,
+                            duration = duration.collectAsState().value,
+                            isPaused = isPaused.collectAsState().value,
                             onSettingsTap = {
                                 navController.navigate(route = Settings)
                             },
@@ -117,6 +114,9 @@ class MainActivity : ComponentActivity() {
                                 intent.putExtra("time", "demo")
                                 ContextCompat.startForegroundService(this@MainActivity, intent)
                             },
+                            onSelectedCategoryChanged = { category ->
+                                viewModel.selectedCategoryChanged(category)
+                            }
                         )
                     }
                     composable<Settings> {

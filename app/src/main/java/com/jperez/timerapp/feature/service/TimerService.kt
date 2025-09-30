@@ -161,7 +161,7 @@ TimerService : Service() {
             return
         }
         isPaused = true
-        handler.removeCallbacks(updateTimeRunnable)  // Stop updating the timer
+        handler.removeCallbacks(updateTimeRunnable)
     }
 
     private fun stopTimer() {
