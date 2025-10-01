@@ -2,6 +2,7 @@ package com.jperez.timerapp.data.datasource
 
 import com.jperez.timerapp.TestMockConstant
 import com.jperez.timerapp.data.database.EntryDAO
+import com.jperez.timerapp.domain.mappers.EntryEntityModelMapper
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -20,17 +21,20 @@ import org.koin.test.KoinTest
  */
 class EntryLocalDataSourceTest : KoinTest {
     private lateinit var mockEntryDao: EntryDAO
+    private lateinit var mockEntryEntityModelMapper: EntryEntityModelMapper
     private lateinit var localDataSource: EntryLocalDataSource
 
     @Before
     fun setUp() {
         mockEntryDao = mockk(relaxed = true)
+        mockEntryEntityModelMapper = mockk(relaxed = true)
         localDataSource = EntryLocalDataSourceImpl()
 
         startKoin {
             modules(
                 module {
                     single<EntryDAO> { mockEntryDao }
+                    single<EntryEntityModelMapper> { mockEntryEntityModelMapper}
                 })
         }
     }
@@ -43,6 +47,7 @@ class EntryLocalDataSourceTest : KoinTest {
     @Test
     fun `getEntriesFromDatabase call dao`() = runTest {
         coEvery { mockEntryDao.getAll() } returns listOf(TestMockConstant.entryEntity)
+        coEvery { mockEntryEntityModelMapper.mapEntityListToModelList(any()) } returns listOf(TestMockConstant.outputEntry)
 
         val result = localDataSource.getEntriesFromDatabase()
 

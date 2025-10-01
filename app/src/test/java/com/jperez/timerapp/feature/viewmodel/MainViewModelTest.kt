@@ -3,7 +3,9 @@ package com.jperez.timerapp.feature.viewmodel
 import com.jperez.timerapp.MainCoroutineRule
 import com.jperez.timerapp.TestMockConstant
 import com.jperez.timerapp.domain.usecase.AddEntryUseCase
+import com.jperez.timerapp.domain.usecase.GetCategoriesUseCase
 import com.jperez.timerapp.domain.usecase.GetEntriesUseCase
+import com.jperez.timerapp.feature.mapper.CategoryUIMapper
 import com.jperez.timerapp.feature.mapper.EntryUIMapper
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -34,6 +36,10 @@ class MainViewModelTest : KoinTest {
     private lateinit var mockGetEntriesUseCase: GetEntriesUseCase
 
     private lateinit var mockEntryUIMapper: EntryUIMapper
+
+    private lateinit var mockGetCategoriesUseCase: GetCategoriesUseCase
+
+    private lateinit var mockCategoryUIMapper: CategoryUIMapper
     private lateinit var viewModel: MainViewModel
 
     @ExperimentalCoroutinesApi
@@ -45,6 +51,8 @@ class MainViewModelTest : KoinTest {
         mockAddEntryUseCase = mockk(relaxed = true)
         mockGetEntriesUseCase = mockk(relaxed = true)
         mockEntryUIMapper = mockk(relaxed = true)
+        mockGetCategoriesUseCase = mockk(relaxed = true)
+        mockCategoryUIMapper = mockk(relaxed = true)
         viewModel = MainViewModel()
         startKoin {
             modules(
@@ -52,6 +60,8 @@ class MainViewModelTest : KoinTest {
                     single<AddEntryUseCase> { mockAddEntryUseCase }
                     single<GetEntriesUseCase> { mockGetEntriesUseCase }
                     single<EntryUIMapper> { mockEntryUIMapper }
+                    single<GetCategoriesUseCase> { mockGetCategoriesUseCase }
+                    single<CategoryUIMapper> { mockCategoryUIMapper }
                 })
         }
     }
@@ -73,18 +83,35 @@ class MainViewModelTest : KoinTest {
             )
 
             advanceUntilIdle() // Yields to perform the registrations
-            assertEquals(TestMockConstant.entryUI, viewModel.uiState.value.first())
+            assertEquals(TestMockConstant.entryUI, viewModel.uiState.value.entries.first())
         }
 
     @Test
-    fun getEntries() =
+    fun initScreenState() =
         runTest(UnconfinedTestDispatcher()) {
 
             coEvery { mockGetEntriesUseCase.execute() } returns listOf(TestMockConstant.outputEntry)
+            coEvery { mockGetCategoriesUseCase.execute() } returns listOf(TestMockConstant.outputCategory)
             coEvery { mockEntryUIMapper.mapEntryToEntryUI(TestMockConstant.outputEntry) } returns TestMockConstant.entryUI
-            viewModel.getEntries()
+            coEvery { mockCategoryUIMapper.mapCategoryToCategoryUI(TestMockConstant.outputCategory) } returns TestMockConstant.categoryUI
+            viewModel.initScreenState()
 
             advanceUntilIdle() // Yields to perform the registrations
-            assertEquals(TestMockConstant.entryUI, viewModel.uiState.value.first())
+            assertEquals(TestMockConstant.entryUI, viewModel.uiState.value.entries.first())
+            assertEquals(TestMockConstant.categoryUI, viewModel.uiState.value.categories.first())
+        }
+
+    @Test
+    fun selectedCategoryChanged() =
+        runTest(UnconfinedTestDispatcher()) {
+            coEvery { mockGetEntriesUseCase.execute() } returns listOf(TestMockConstant.outputEntry)
+            coEvery { mockGetCategoriesUseCase.execute() } returns listOf(TestMockConstant.outputCategory)
+            coEvery { mockEntryUIMapper.mapEntryToEntryUI(TestMockConstant.outputEntry) } returns TestMockConstant.entryUI
+            coEvery { mockCategoryUIMapper.mapCategoryToCategoryUI(TestMockConstant.outputCategory) } returns TestMockConstant.categoryUI
+
+            viewModel.selectedCategoryChanged(TestMockConstant.updatedCategoryUI)
+
+            advanceUntilIdle() // Yields to perform the registrations
+            assertEquals(TestMockConstant.categoryUI, viewModel.uiState.value.selectedCategory)
         }
 }

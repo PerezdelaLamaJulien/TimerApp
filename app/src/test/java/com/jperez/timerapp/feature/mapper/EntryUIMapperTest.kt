@@ -1,5 +1,6 @@
 package com.jperez.timerapp.feature.mapper
 
+import com.jperez.timerapp.TestMockConstant
 import com.jperez.timerapp.domain.model.Entry
 import com.jperez.timerapp.feature.model.CategoryColor
 import com.jperez.timerapp.feature.model.CategoryType
@@ -26,7 +27,7 @@ class EntryUIMapperTest {
             Entry(
                 date = LocalDateTime.of(2025, 1, 15, 12, 30),
                 duration = 5.seconds.toJavaDuration(),
-                category = "",
+                category = TestMockConstant.outputCategory,
                 description = ""
             )
         )

@@ -4,16 +4,18 @@ import com.jperez.timerapp.TestMockConstant
 import com.jperez.timerapp.data.datasource.CategoryLocalDataSource
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class GetCategoriesUseCaseTest {
 
     private lateinit var mockCategoryLocalDataSource: CategoryLocalDataSource
