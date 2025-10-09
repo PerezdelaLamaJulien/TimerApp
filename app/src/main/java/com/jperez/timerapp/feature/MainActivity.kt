@@ -41,6 +41,9 @@ class MainActivity : ComponentActivity() {
     private val _isPaused = MutableStateFlow(false)
     val isPaused: StateFlow<Boolean> = _isPaused
 
+    private val _description = MutableStateFlow("")
+    val description: StateFlow<String> = _description
+
     private val _duration = MutableStateFlow(Duration.ZERO)
     val duration: StateFlow<Duration> = _duration
 
@@ -49,11 +52,13 @@ class MainActivity : ComponentActivity() {
     private val durationObserver: Observer<Duration> = Observer { newDuration ->
         _duration.value = newDuration
     }
+
     private val instantObserver: Observer<Instant?> = Observer { instantStop ->
         if (instantStop != null) {
             viewModel.registerTimer(
-                duration.value,
-                launchTimerDateTime ?: LocalDateTime.now()
+                duration = duration.value,
+                launchedDateTime = launchTimerDateTime ?: LocalDateTime.now(),
+                description = description.value
             )
         }
     }
@@ -86,6 +91,7 @@ class MainActivity : ComponentActivity() {
                             uiState = viewModel.uiState.collectAsState().value,
                             duration = duration.collectAsState().value,
                             isPaused = isPaused.collectAsState().value,
+                            description = description.collectAsState().value,
                             onSettingsTap = {
                                 navController.navigate(route = Settings)
                             },
@@ -113,6 +119,9 @@ class MainActivity : ComponentActivity() {
                                     }
                                 intent.putExtra("time", "demo")
                                 ContextCompat.startForegroundService(this@MainActivity, intent)
+                            },
+                            onDescriptionChanged = {
+                                _description.value = it
                             },
                             onSelectedCategoryChanged = { category ->
                                 viewModel.selectedCategoryChanged(category)
