@@ -34,4 +34,8 @@ class EntryLocalDataSourceImpl : EntryLocalDataSource {
     override suspend fun deleteEntry(id: String) {
         entryDAO.deleteByID(id)
     }
+
+    override suspend fun deleteAll() {
+        entryDAO.deleteAll()
+    }
 }

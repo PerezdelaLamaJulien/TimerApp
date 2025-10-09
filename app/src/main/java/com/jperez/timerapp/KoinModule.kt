@@ -12,6 +12,7 @@ import com.jperez.timerapp.domain.mappers.CategoryEntityModelMapper
 import com.jperez.timerapp.domain.mappers.EntryEntityModelMapper
 import com.jperez.timerapp.domain.usecase.SaveCategoryUseCase
 import com.jperez.timerapp.domain.usecase.AddEntryUseCase
+import com.jperez.timerapp.domain.usecase.CleanDatabaseUseCase
 import com.jperez.timerapp.domain.usecase.DeleteCategoryUseCase
 import com.jperez.timerapp.domain.usecase.GetCategoriesUseCase
 import com.jperez.timerapp.domain.usecase.GetEntriesUseCase
@@ -70,6 +71,10 @@ var koinModule = module {
 
     factory<DeleteCategoryUseCase> {
         DeleteCategoryUseCase()
+    }
+
+    factory<CleanDatabaseUseCase> {
+        CleanDatabaseUseCase()
     }
 
     // Data

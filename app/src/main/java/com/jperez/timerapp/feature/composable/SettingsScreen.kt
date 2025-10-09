@@ -10,15 +10,20 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,8 +51,31 @@ fun SettingsScreen(
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     var bottomSheetCategoryUI by remember { mutableStateOf<CategoryUI?>(null) }
-    val categoryItems = viewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    if (uiState.value.snackbarText != null ) {
+        LaunchedEffect(uiState.value.snackbarText != null) {
+            try {
+                when (snackbarHostState.showSnackbar(
+                    uiState.value.snackbarText!!,
+                )) {
+                    SnackbarResult.Dismissed -> {
+                        viewModel.snackBarDismissed()
+                    }
+
+                    SnackbarResult.ActionPerformed -> {}
+                }
+            } finally {
+            }
+        }
+    }
+
+
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         modifier = modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(
@@ -85,7 +113,16 @@ fun SettingsScreen(
                 .padding(innerPadding)
                 .fillMaxSize(),
         ) {
-            // todo : clean database
+
+            Button(
+                onClick = {
+                    viewModel.cleanDatabase()
+                },
+            ) {
+                Text("Clean Database")
+            }
+
+
             // todo : show personal category name in time list
             // todo : default minimum time to add in database
             // todo : show credits
@@ -112,7 +149,7 @@ fun SettingsScreen(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                categoryItems.value.forEach { categoryUI ->
+                uiState.value.categories.forEach { categoryUI ->
                     CategoryItem(
                         categoryUI,
                         modifier = modifier.clickable{

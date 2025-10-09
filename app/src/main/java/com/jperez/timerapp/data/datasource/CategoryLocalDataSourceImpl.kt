@@ -45,4 +45,8 @@ class CategoryLocalDataSourceImpl : CategoryLocalDataSource {
     override suspend fun deleteCategory(id: String) {
         categoryDAO.deleteByID(id)
     }
+
+    override suspend fun deleteAll() {
+        categoryDAO.deleteAll()
+    }
 }
