@@ -30,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,13 +60,16 @@ fun MainScreen(
     uiState: MainScreenUI,
     duration: Duration,
     isPaused: Boolean,
+    description: String,
     onSettingsTap: () -> Unit,
     onSelectedCategoryChanged: (CategoryUI) -> Unit,
     onStart: () -> Unit,
     onPaused: () -> Unit,
     onStop: () -> Unit,
+    onDescriptionChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -162,7 +166,7 @@ fun MainScreen(
                                             ) {
                                                 Icon(
                                                     imageVector = option.categoryType.icon,
-                                                    contentDescription = "Email"
+                                                    contentDescription = "Type Icon"
                                                 )
                                             }
                                             Text(option.name)
@@ -209,6 +213,15 @@ fun MainScreen(
                         }
                 }
             }
+
+            TextField(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                value = description,
+                onValueChange = { onDescriptionChanged(it) },
+                singleLine = true,
+                label = { Text("Description")}
+            )
+
             LazyColumn {
                 items(uiState.entries.size) { index ->
                     EntryListItem(
@@ -244,6 +257,8 @@ fun MainScreenPreviewLight() {
                 onStart = {},
                 onPaused = {},
                 onStop = {},
+                description = "",
+                onDescriptionChanged = {}
             )
         }
     }
@@ -271,6 +286,8 @@ fun MainScreenPreviewDark() {
                 onPaused = {},
                 onStop = {},
                 onSelectedCategoryChanged = {},
+                description = "",
+                onDescriptionChanged = {}
             )
         }
     }

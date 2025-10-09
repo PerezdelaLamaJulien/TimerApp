@@ -54,13 +54,17 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun registerTimer(duration: Duration, launchedDateTime: LocalDateTime){
+    fun registerTimer(
+        duration: Duration,
+        launchedDateTime: LocalDateTime,
+        description: String,
+        ){
         viewModelScope.launch {
             val savedEntry = addEntryUseCase.execute(
                 Entry(
                     date = launchedDateTime,
                     duration = duration,
-                    description = "", //todo
+                    description = description,
                     category = categoryUIMapper.reverseMapCategoryUIToCategory(uiState.value.selectedCategory!!)
                 )
             )
