@@ -29,10 +29,10 @@ Chaque session de suivi fonctionne en **tâche de premier plan (Foreground Servi
 https://github.com/user-attachments/assets/a3625a9c-c148-46c3-a81c-c01194726139
 
 Main Screen : 
-<img width="481" height="1080" alt="image" src="https://github.com/user-attachments/assets/46bb9d34-3792-47cf-b474-717a1a8c2716" />
+<img width="423" height="950" alt="image" src="https://github.com/user-attachments/assets/46bb9d34-3792-47cf-b474-717a1a8c2716" />
 
 Settings Screen : 
-<img width="1080" height="2424" alt="image" src="https://github.com/user-attachments/assets/df002876-dad5-43e7-819f-ca5e8595c269" />
+<img width="423" height="950" alt="image" src="https://github.com/user-attachments/assets/df002876-dad5-43e7-819f-ca5e8595c269" />
 
 ---
 
