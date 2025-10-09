@@ -2,12 +2,16 @@ package com.jperez.timerapp.feature.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jperez.timerapp.domain.model.Category
 import com.jperez.timerapp.domain.model.Entry
 import com.jperez.timerapp.domain.usecase.AddEntryUseCase
 import com.jperez.timerapp.domain.usecase.GetCategoriesUseCase
 import com.jperez.timerapp.domain.usecase.GetEntriesUseCase
+import com.jperez.timerapp.domain.usecase.SaveCategoryUseCase
 import com.jperez.timerapp.feature.mapper.CategoryUIMapper
 import com.jperez.timerapp.feature.mapper.EntryUIMapper
+import com.jperez.timerapp.feature.model.CategoryColor
+import com.jperez.timerapp.feature.model.CategoryType
 import com.jperez.timerapp.feature.model.CategoryUI
 import com.jperez.timerapp.feature.model.MainScreenUI
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,19 +23,28 @@ import java.time.LocalDateTime
 
 class MainViewModel : ViewModel() {
     private val addEntryUseCase: AddEntryUseCase by inject(
-        AddEntryUseCase::class.java)
+        AddEntryUseCase::class.java
+    )
+
+    private val saveCategoryUseCase: SaveCategoryUseCase by inject(
+        SaveCategoryUseCase::class.java
+    )
 
     private val getEntriesUseCase: GetEntriesUseCase by inject(
-        GetEntriesUseCase::class.java)
+        GetEntriesUseCase::class.java
+    )
 
     private val getCategoriesUseCase: GetCategoriesUseCase by inject(
-        GetCategoriesUseCase::class.java)
+        GetCategoriesUseCase::class.java
+    )
 
     private val entryUIMapper: EntryUIMapper by inject(
-        EntryUIMapper::class.java)
+        EntryUIMapper::class.java
+    )
 
     private val categoryUIMapper: CategoryUIMapper by inject(
-        CategoryUIMapper::class.java)
+        CategoryUIMapper::class.java
+    )
 
 
     private val _uiState = MutableStateFlow(MainScreenUI())
@@ -43,14 +56,37 @@ class MainViewModel : ViewModel() {
 
     fun initScreenState() {
         viewModelScope.launch {
-            val entries = getEntriesUseCase.execute().map { entryUIMapper.mapEntryToEntryUI(it) }.toMutableList()
-            val categories = getCategoriesUseCase.execute().map { categoryUIMapper.mapCategoryToCategoryUI(it) }.toMutableList()
+            verifyDefaultCategory()
+            val entries = getEntriesUseCase.execute().map { entryUIMapper.mapEntryToEntryUI(it) }
+                .toMutableList()
+            val categories =
+                getCategoriesUseCase.execute().map { categoryUIMapper.mapCategoryToCategoryUI(it) }
+                    .toMutableList()
 
             _uiState.value = uiState.value.copy(
-                entries =  entries,
+                entries = entries,
                 categories = categories,
                 selectedCategory = categories.first()
             )
+        }
+    }
+
+    fun verifyDefaultCategory() {
+        viewModelScope.launch {
+            val categories =
+                getCategoriesUseCase.execute().map { categoryUIMapper.mapCategoryToCategoryUI(it) }
+                    .toMutableList()
+
+            if (categories.isEmpty()) {
+                saveCategoryUseCase.execute(
+                    Category(
+                        uid = null,
+                        name = "Default",
+                        type = CategoryType.DEFAULT.name,
+                        color = CategoryColor.DARK_GREEN.name
+                    )
+                )
+            }
         }
     }
 
@@ -58,7 +94,7 @@ class MainViewModel : ViewModel() {
         duration: Duration,
         launchedDateTime: LocalDateTime,
         description: String,
-        ){
+    ) {
         viewModelScope.launch {
             val savedEntry = addEntryUseCase.execute(
                 Entry(
@@ -70,12 +106,13 @@ class MainViewModel : ViewModel() {
             )
 
             _uiState.value = uiState.value.copy(
-                entries = uiState.value.entries.toMutableList().apply { add(entryUIMapper.mapEntryToEntryUI(savedEntry)) },
+                entries = uiState.value.entries.toMutableList()
+                    .apply { add(entryUIMapper.mapEntryToEntryUI(savedEntry)) },
             )
         }
     }
 
-    fun selectedCategoryChanged(categoryUI: CategoryUI){
+    fun selectedCategoryChanged(categoryUI: CategoryUI) {
         _uiState.value = uiState.value.copy(
             selectedCategory = categoryUI
         )

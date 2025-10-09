@@ -10,4 +10,6 @@ interface CategoryLocalDataSource {
     suspend fun saveCategoryToDatabase(category: Category): Category
 
     suspend fun deleteCategory(id: String)
+
+    suspend fun deleteAll()
 }

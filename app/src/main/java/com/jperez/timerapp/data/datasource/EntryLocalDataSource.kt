@@ -10,4 +10,6 @@ interface EntryLocalDataSource {
     suspend fun saveEntryToDatabase(entry: Entry): Entry
 
     suspend fun deleteEntry(id: String)
+
+    suspend fun deleteAll()
 }
